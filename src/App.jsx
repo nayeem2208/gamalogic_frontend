@@ -1,12 +1,15 @@
-import { useState } from 'react'
 import './App.css'
+import Router from './Routers/Router'
+import Header from './components/Header'
+import SideBar from './components/SideBar'
 
 function App() {
 
   return (
-    <div className='flex h-screen'>
-      <div style={{backgroundColor:'#0A0E2B'}}>heyy</div>
-      <div></div>
+    <div className='lg:flex h-screen' style={{fontFamily:'Raleway,sans-serif;'}}>
+      <SideBar/>
+      <Header/>
+        <Router/>
     </div>
   )
 }
