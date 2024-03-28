@@ -12,6 +12,9 @@ import IntegrateGoogleSheet from '../pages/IntegrateGoogleSheet'
 import AccountSettings from '../pages/AccountSettings'
 import BuyCredits from '../pages/BuyCredits'
 import Support from '../pages/Support'
+import Authentication from '../pages/Authentication'
+import Login from '../components/Login'
+import Signup from '../components/Signup'
 
 function Router() {
   return (
@@ -28,6 +31,10 @@ function Router() {
             <Route path='/account-settings' element={<AccountSettings/>} />
             <Route path='/buyCredits' element={<BuyCredits/>} />
             <Route path='/support' element={<Support/>} />
+        </Route>
+        <Route path='/' element={<Authentication/>}>
+            <Route index path='login' element={<Login/>}/>
+            <Route path='signup' element={<Signup/>}/>
         </Route>
     </Routes>
   )

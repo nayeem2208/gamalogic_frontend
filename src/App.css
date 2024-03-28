@@ -24,3 +24,37 @@
     font-weight: 200;
 }
 
+.auth .description{
+    font-size: large;
+    font-weight: 200;
+    color: rgb(194, 192, 192);
+}
+
+.h2-background {
+    transform: rotate(140deg);
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    top: 0.7rem;
+    position: absolute;
+    width: 80px;
+}
+
+.h2-background div {
+    height: 13px;
+    width: 70px;
+    border-radius: 13px;
+    opacity: 0.15;
+    z-index: -2;
+}
+
+.h2-background .blue {
+    background-color: #3AFAFE;
+}
+
+.h2-background .red {
+    background-color: #F74C41;
+    margin-bottom: .3rem;
+}
+

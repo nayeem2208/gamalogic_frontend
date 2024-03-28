@@ -29,7 +29,7 @@ function SideBar() {
   return (
     <div
       style={{ backgroundColor: "#0A0E2B" }}
-      className="w-96 text-white hidden  lg:flex flex-col  p-4 pt-8 overflow-y-auto "
+      className="w-96 text-white hidden  lg:flex flex-col h-screen  p-4 pt-8 overflow-y-auto pb-12"
     >
       <Link to="/">
         <p className="font-semibold text-2xl text-center mt-2">GAMALOGIC</p>
@@ -107,10 +107,10 @@ function SideBar() {
         <Link to='/support'><li className="my-4 flex">
           <SlSupport className="text-teal-800 mt-2 mx-2 text-lg" /> Support
         </li></Link>
-        <li className="my-4 flex">
+        <Link to='/login'><li className="my-4 flex">
           <IoLogOutOutline className="text-teal-800 mt-2 mx-2 " />
           Logout
-        </li>
+        </li></Link>
       </ul>
     </div>
   );
