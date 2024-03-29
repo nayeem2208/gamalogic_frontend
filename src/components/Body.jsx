@@ -5,7 +5,6 @@ function Body() {
   return (
     <div className='w-full h-screen overflow-y-auto pb-12'>
       <Outlet/>
-     
     </div>
   )
 }
