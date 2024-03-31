@@ -1,11 +1,56 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import axiosInstance from "../axios/axiosInstance";
+import { useUserState } from "../context/userContext";
+import { toast } from "react-toastify";
 
 function Login() {
+  let [data,setData]=useState({email:'',password:''})
+  let { setUserDetails } = useUserState();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+  const navigate=useNavigate()
+  const location = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    async function verifyEmail(){
+      const queryParams = new URLSearchParams(location.search);
+      if (queryParams) {
+        const email = queryParams.get("email");
+        if (email) {
+          let res=await axiosInstance.get(`/verifyEmail?email=${email}`);
+          let token = res.data;
+          setUserDetails(token);
+          localStorage.setItem("token", JSON.stringify(token));
+          navigate("/");
+        }
+      }
+    }
+  verifyEmail()
+  }, [location.search]);
+
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    try {
+      let userData=await axiosInstance.post('login',data)
+      toast.dark("Authentication success", 2000);
+      let token = userData.data;
+      setUserDetails(token);
+      localStorage.setItem("token", JSON.stringify(token));
+      navigate("/");
+    } catch (error) {
+      console.log(error.response,'error')
+      toast.error(error.response.data.error)
+    }
+  };
+
+
   return (
     <div
       className="w-full flex justify-center items-center "
@@ -26,10 +71,15 @@ function Login() {
           className="flex flex-col p-10 w-3/6 mb-16"
           style={{ backgroundColor: "#161736" }}
         >
+          <form onSubmit={handleSubmit} className="flex flex-col">
           <label htmlFor="">Email</label>
           <input
-            type="email"
-            placeholder="enter your email"
+           type="email"
+           name="email"
+           id="email"
+           placeholder="Enter your email"
+           onChange={handleInputChange}
+           value={data.email}
             className="bg-transparent border border-cyan-400 rounded-md py-1 px-4 text-gray-400 my-1"
           />
           <label htmlFor="" className="mt-6">
@@ -37,14 +87,19 @@ function Login() {
           </label>
           <input
             type="password"
-            placeholder="enter your password"
+            name="password"
+            id="password"
+            placeholder="Enter your password"
+            onChange={handleInputChange}
+            value={data.password}
             className="bg-transparent border border-cyan-400 rounded-md py-1 px-4 text-gray-400 my-1"
           />
           <div className="flex justify-center mt-8">
-            <button className="bg-red-500 w-2/6 p-2 rounded-3xl">
+            <button className="bg-red-500 w-2/6 p-2 rounded-3xl" type="submit">
               SIGN IN
             </button>
           </div>
+          </form>
           <div className="flex justify-center my-5 ">
             {" "}
             {/* <div className="bg-white text-gray-700 p-3 w-3/5 h-16 rounded-lg shadow-md shadow-gray-200 flex justify-center items-center">

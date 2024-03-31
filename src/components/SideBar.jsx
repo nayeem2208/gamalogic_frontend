@@ -12,11 +12,14 @@ import { SlSupport } from "react-icons/sl";
 import { MdArrowDropDown, MdOutlineFindInPage } from "react-icons/md";
 import { RiProfileLine } from "react-icons/ri";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useUserState } from "../context/userContext";
 
 function SideBar() {
   let [uploadfileDropDown, setUploadFileDropDown] = useState(false);
   let [tutorialDropDown, setTutorialDropDown] = useState(false);
+  let {setUserDetails,userDetails}=useUserState()
+  let navigate = useNavigate();
 
   const uploadfileDropDownToggle = () => {
     setUploadFileDropDown(!uploadfileDropDown);
@@ -26,8 +29,16 @@ function SideBar() {
     setTutorialDropDown(!tutorialDropDown);
   };
 
+  function logoutHandler() {
+    localStorage.removeItem("token");
+    setUserDetails(null);
+    navigate("/login");
+}
+
+
   return (
-    <div
+    <>
+    {userDetails&&<div
       style={{ backgroundColor: "#0A0E2B" }}
       className="w-96 text-white hidden  lg:flex flex-col h-screen  p-4 pt-8 overflow-y-auto pb-12"
     >
@@ -107,12 +118,13 @@ function SideBar() {
         <Link to='/support'><li className="my-4 flex">
           <SlSupport className="text-teal-800 mt-2 mx-2 text-lg" /> Support
         </li></Link>
-        <Link to='/login'><li className="my-4 flex">
+        <li className="my-4 flex cursor-pointer" onClick={logoutHandler}>
           <IoLogOutOutline className="text-teal-800 mt-2 mx-2 " />
           Logout
-        </li></Link>
+        </li>
       </ul>
-    </div>
+    </div>}
+    </>
   );
 }
 
