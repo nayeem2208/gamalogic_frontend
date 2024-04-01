@@ -58,6 +58,21 @@ function Signup() {
     }
   };
 
+  const authenticateData = async (credentialResponse) => {
+    try {
+      // let res = await axios.post('https://poseben-backend.onrender.com/api/GoogleLogin',{credentialResponse})
+      let res = await axiosInstance.post("/googleSignup", {
+        credentialResponse,
+      });
+      let token = res.token;
+      localStorage.setItem("token", token);
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response?.data.error);
+    }
+  };
+
   return (
     <div
       className="w-full flex justify-center items-center "
@@ -139,7 +154,7 @@ function Signup() {
             </div> */}
             <GoogleLogin
               onSuccess={(credentialResponse) => {
-                console.log(credentialResponse);
+                authenticateData(credentialResponse)
               }}
               onError={() => {
                 console.log("Login Failed");

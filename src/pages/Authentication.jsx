@@ -19,8 +19,9 @@ function Authentication() {
           navigate('/')
         }
     }, []);
+    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   return (
-    <GoogleOAuthProvider clientId="<your_client_id>">
+    <GoogleOAuthProvider clientId={googleClientId}>
       {!userDetails&&
     <div className='bg-bgblue w-full h-screen text-white overflow-y-auto'>
       <div className="px-12 py-4 flex justify-between items-center underlineLi h-20 fixed top-0 left-0 right-0 z-10 bg-bgblue ">

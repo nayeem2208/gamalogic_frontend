@@ -4,6 +4,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import axiosInstance from "../axios/axiosInstance";
 import { useUserState } from "../context/userContext";
 import { toast } from "react-toastify";
+import { useGoogleLogin } from '@react-oauth/google';
 
 function Login() {
   let [data,setData]=useState({email:'',password:''})
@@ -49,6 +50,33 @@ function Login() {
       toast.error(error.response.data.error)
     }
   };
+
+  // const login = useGoogleLogin({
+  //   onSuccess: async (tokenResponse) => { 
+  //     try {
+  //        authenticateData(tokenResponse);
+  //     } catch (err) {
+  //       console.error(err);
+  //       toast.error(err.response?.data.error);
+  //     }
+  //   }
+  // });
+
+  const authenticateData = async (credentialResponse) => {
+    try {
+      // let res = await axios.post('https://poseben-backend.onrender.com/api/GoogleLogin',{credentialResponse})
+      let res = await axiosInstance.post("/googleLogin", {
+        credentialResponse,
+      });
+      let token = res.token;
+      localStorage.setItem("token", token);
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response?.data.error);
+    }
+  };
+  
 
 
   return (
@@ -103,11 +131,11 @@ function Login() {
           <div className="flex justify-center my-5 ">
             {" "}
             {/* <div className="bg-white text-gray-700 p-3 w-3/5 h-16 rounded-lg shadow-md shadow-gray-200 flex justify-center items-center">
-              Signin with Google
+              <button onClick={() => login()}>Signin with Google</button>
             </div> */}
             <GoogleLogin
               onSuccess={(credentialResponse) => {
-                console.log(credentialResponse);
+                authenticateData(credentialResponse);
               }}
               onError={() => {
                 console.log("Login Failed");
