@@ -15,6 +15,9 @@ import Support from '../pages/Support'
 import Authentication from '../pages/Authentication'
 import Login from '../components/Login'
 import Signup from '../components/Signup'
+import ForgotPassword from '../components/ForgotPassword'
+import ResetPassword from '../components/ResetPassword'
+
 
 function Router() {
   return (
@@ -35,6 +38,8 @@ function Router() {
         <Route path='/' element={<Authentication/>}>
             <Route index path='login' element={<Login/>}/>
             <Route path='signup' element={<Signup/>}/>
+            <Route path='forgotPassword' element={<ForgotPassword/>}/>
+            <Route path='resetPassword' element={<ResetPassword/>}/>
         </Route>
     </Routes>
   )

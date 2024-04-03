@@ -1,37 +1,31 @@
-import { Outlet, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react';
-import { useUserState } from '../context/userContext';
+import { Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useUserState } from "../context/userContext";
 
 function Body() {
-
   let navigate = useNavigate();
-  let { setUserDetails ,userDetails} = useUserState();
+  let { setUserDetails, userDetails } = useUserState();
   useEffect(() => {
-    if(!userDetails){
-      navigate('/login')
+    if (!userDetails) {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        let parsedToken;
+        try {
+          parsedToken = JSON.parse(storedToken);
+        } catch (error) {
+          parsedToken = storedToken;
+        }
+        setUserDetails(parsedToken);
+      } else {
+        navigate("/login");
+      }
     }
-    // else{
-    //   const storedToken = localStorage.getItem("token");
-    // if (storedToken) {
-    //   let parsedToken;
-    //   try {
-    //     parsedToken = JSON.parse(storedToken);
-    //   } catch (error) {
-    //     parsedToken = storedToken;
-    //   }
-    //   setUserDetails(parsedToken);
-    // } else {
-    //   navigate("/login");
-    // }
-    // }
-    
   }, []);
-
   return (
-    <div className='w-full h-screen overflow-y-auto pb-12'>
+    <div className="w-full h-screen overflow-y-auto pb-12">
       {userDetails && <Outlet />}
     </div>
-  )
+  );
 }
 
-export default Body
+export default Body;

@@ -19,6 +19,7 @@ function Authentication() {
           navigate('/')
         }
     }, []);
+  
     const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   return (
     <GoogleOAuthProvider clientId={googleClientId}>

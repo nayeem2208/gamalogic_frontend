@@ -5,7 +5,7 @@ import { AiOutlineHome } from "react-icons/ai";
 
 function Footer() {
   return (
-    <div className="bg-bgblue w-full  h-10 flex justify-between items-center px-6 text-white fixed bottom-0 left-0 right-0 z-10">
+    <footer className="bg-bgblue w-full  h-10 flex justify-between items-center px-6 text-white fixed bottom-0 left-0 right-0 z-10">
       <div>© Gamalogic 2019-2024</div>
       <div className="w-2/12">
         <ul className="flex justify-between items-center text-sm">
@@ -51,7 +51,7 @@ function Footer() {
           </li>
         </ul>
       </div>
-    </div>
+    </footer>
   );
 }
 

@@ -97,14 +97,21 @@ function SideBar() {
               Docs
             </li></a>
             {/* </Link>  */}
-           <Link to='/find-any-email'> <li className="my-4 flex">
-              <MdOutlineFindInPage className="text-teal-800 mt-2 mx-2 text-lg" />{" "}
-              Find Any Email
-            </li></Link>
-            <Link to='/googleSheet-integration'><li className="my-4 flex">
+            {/* <Link to='/googleSheet-integration'> */}
+            <a href="https://blog.gamalogic.com/email-validation-google-sheets-add-on/" target="_blank">
+              <li className="my-4 flex">
               <RiProfileLine className="text-teal-800 mt-2 mx-2 text-lg" />{" "}
               Integrate Google sheets
-            </li></Link>
+            </li></a>
+            {/* </Link> */}
+           {/* <Link to='/find-any-email'> */}
+           <a href="https://blog.gamalogic.com/find-email-address-using-name-and-company-on-google-sheets-add-on/" target="_blank">
+             <li className="my-4 flex">
+              <MdOutlineFindInPage className="text-teal-800 mt-2 mx-2 text-lg" />{" "}
+              Find Any Email
+            </li></a>
+            {/* </Link> */}
+            
           </ul>
         )}
         <Link to='/account-settings'><li className="my-4 flex">

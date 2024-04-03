@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../axios/axiosInstance";
 import { toast } from "react-toastify";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useUserState } from "../context/userContext";
 
 function Signup() {
   let [data, setData] = useState({
@@ -13,6 +15,8 @@ function Signup() {
   });
 
   let navigate = useNavigate();
+  let { setUserDetails } = useUserState();
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setData((prevData) => ({
@@ -23,17 +27,20 @@ function Signup() {
 
   const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?!\s).{6,}$/;
   var emailPattern = /\S+@\S+\.\S+/;
-  let nameOfUser=data.fullname.trim()
-  console.log(nameOfUser.length,'length')
+  let nameOfUser = data.fullname.trim();
+  console.log(nameOfUser.length, "length");
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = await window.grecaptcha.getResponse();
     try {
-
-      if ((data.fullname, data.email, data.password, data.confirmPassword)&&nameOfUser.length>2) {
+      if (
+        (data.fullname, data.email, data.password, data.confirmPassword) &&
+        nameOfUser.length > 2
+      ) {
         if (data.password == data.confirmPassword) {
           if (emailPattern.test(data.email)) {
             if (passwordPattern.test(data.password)) {
-              let userData = await axiosInstance.post("signup", data);
+              let userData = await axiosInstance.post("signup", {data,token});
               console.log(userData, "userdata");
               toast.dark(userData?.data);
               navigate("/login");
@@ -42,9 +49,8 @@ function Signup() {
                 "Please give a strong password with character and string "
               );
             }
-          }
-          else{
-            toast.error('Please provide a valid email')
+          } else {
+            toast.error("Please provide a valid email");
           }
         } else {
           toast.error("please check confirm password");
@@ -54,24 +60,34 @@ function Signup() {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response?.data?.error)
+      toast.error(error.response?.data?.error);
     }
   };
 
   const authenticateData = async (credentialResponse) => {
     try {
+      
       // let res = await axios.post('https://poseben-backend.onrender.com/api/GoogleLogin',{credentialResponse})
       let res = await axiosInstance.post("/googleSignup", {
         credentialResponse,
       });
-      let token = res.token;
-      localStorage.setItem("token", token);
+      let token = res.data;
+      setUserDetails(token);
+      localStorage.setItem("token", JSON.stringify(token));
       navigate("/");
     } catch (err) {
       console.log(err);
       toast.error(err.response?.data.error);
     }
   };
+
+
+  const recaptchaSiteKey=import.meta.env.VITE_RECAPTA_SITE_KEY
+  console.log(recaptchaSiteKey,'recaptcha')
+  function reCaptchaOnChange(value) {
+    console.log("Captcha value:", value);
+  }
+  
 
   return (
     <div
@@ -134,9 +150,23 @@ function Signup() {
               onChange={handleInputChange}
               className="bg-transparent border border-cyan-400 rounded-md py-1 px-4 text-gray-400 my-1"
             />
+            <ReCAPTCHA sitekey={recaptchaSiteKey}  onChange={reCaptchaOnChange} className="my-2 flex justify-center"/>
             <p className="text-xs text-center text-gray-400">
-              By signing up, you agree to our Terms of Service , Privacy Policy
-              and subscribe to our mailing list
+              By signing up, you agree to our{" "}
+              <a
+                href="https://gamalogic.com/terms-of-service"
+                className="hover:text-white"
+              >
+                Terms of Service{" "}
+              </a>
+              ,
+              <a
+                href="https://gamalogic.com/privacy-policy"
+                className="hover:text-white"
+              >
+                {" "}
+                Privacy Policy and subscribe to our mailing list
+              </a>
             </p>
             <div className="flex justify-center mt-8">
               <button
@@ -153,8 +183,9 @@ function Signup() {
               Signup with Google
             </div> */}
             <GoogleLogin
+              text="Sign up with Google"
               onSuccess={(credentialResponse) => {
-                authenticateData(credentialResponse)
+                authenticateData(credentialResponse);
               }}
               onError={() => {
                 console.log("Login Failed");

@@ -4,28 +4,29 @@ import { GoogleLogin } from "@react-oauth/google";
 import axiosInstance from "../axios/axiosInstance";
 import { useUserState } from "../context/userContext";
 import { toast } from "react-toastify";
-import { useGoogleLogin } from '@react-oauth/google';
+import { FaEye } from "react-icons/fa";
 
 function Login() {
-  let [data,setData]=useState({email:'',password:''})
-  let { setUserDetails } = useUserState();
+  let [data, setData] = useState({ email: "", password: "" });
+  let { setUserDetails, setUserName } = useUserState();
+  let [passwordVisible,setPasswordVisible]=useState(false)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setData(prevData => ({
+    setData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   };
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
-    async function verifyEmail(){
+    async function verifyEmail() {
       const queryParams = new URLSearchParams(location.search);
       if (queryParams) {
         const email = queryParams.get("email");
         if (email) {
-          let res=await axiosInstance.get(`/verifyEmail?email=${email}`);
+          let res = await axiosInstance.get(`/verifyEmail?email=${email}`);
           let token = res.data;
           setUserDetails(token);
           localStorage.setItem("token", JSON.stringify(token));
@@ -33,26 +34,26 @@ function Login() {
         }
       }
     }
-  verifyEmail()
+    verifyEmail();
   }, [location.search]);
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let userData=await axiosInstance.post('login',data)
+      let userData = await axiosInstance.post("login", data);
       toast.dark("Authentication success", 2000);
       let token = userData.data;
       setUserDetails(token);
       localStorage.setItem("token", JSON.stringify(token));
       navigate("/");
     } catch (error) {
-      console.log(error.response,'error')
-      toast.error(error.response.data.error)
+      console.log(error.response, "error");
+      toast.error(error.response.data.error);
     }
   };
 
   // const login = useGoogleLogin({
-  //   onSuccess: async (tokenResponse) => { 
+  //   onSuccess: async (tokenResponse) => {
   //     try {
   //        authenticateData(tokenResponse);
   //     } catch (err) {
@@ -68,16 +69,21 @@ function Login() {
       let res = await axiosInstance.post("/googleLogin", {
         credentialResponse,
       });
-      let token = res.token;
-      localStorage.setItem("token", token);
+      let token = res.data;
+      setUserDetails(token);
+      localStorage.setItem("token", JSON.stringify(token));
       navigate("/");
     } catch (err) {
       console.log(err);
       toast.error(err.response?.data.error);
     }
   };
-  
 
+  const passwordVisibleToggle=()=>{
+    if(data.password){
+    setPasswordVisible(!passwordVisible)
+    }
+  }
 
   return (
     <div
@@ -100,33 +106,48 @@ function Login() {
           style={{ backgroundColor: "#161736" }}
         >
           <form onSubmit={handleSubmit} className="flex flex-col">
-          <label htmlFor="">Email</label>
-          <input
-           type="email"
-           name="email"
-           id="email"
-           placeholder="Enter your email"
-           onChange={handleInputChange}
-           value={data.email}
-            className="bg-transparent border border-cyan-400 rounded-md py-1 px-4 text-gray-400 my-1"
-          />
-          <label htmlFor="" className="mt-6">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            placeholder="Enter your password"
-            onChange={handleInputChange}
-            value={data.password}
-            className="bg-transparent border border-cyan-400 rounded-md py-1 px-4 text-gray-400 my-1"
-          />
-          <div className="flex justify-center mt-8">
-            <button className="bg-red-500 w-2/6 p-2 rounded-3xl" type="submit">
-              SIGN IN
-            </button>
-          </div>
+            <label htmlFor="">Email</label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Enter your email"
+              onChange={handleInputChange}
+              value={data.email}
+              className="bg-transparent border border-cyan-400 rounded-md py-1 px-4 text-gray-400 my-1"
+            />
+            <label htmlFor="" className="mt-6">
+              Password
+            </label>
+            {/* <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Enter your password"
+              onChange={handleInputChange}
+              value={data.password}
+              className="bg-transparent border border-cyan-400 rounded-md py-1 px-4 text-gray-400 my-1"
+            /> */}
+            <div className="flex bg-transparent border justify-between items-center border-cyan-400 rounded-md py-1 px-1  text-gray-400 my-1">
+              <input
+                className="bg-transparent w-5/6 px-3 outline-none"
+                type={passwordVisible?'text':'password'}
+                name="password"
+                id="password"
+                placeholder="Enter your password"
+                onChange={handleInputChange}
+                value={data.password}
+              />
+              <FaEye className="w-4 h-4 text-cyan-400 ml-2" onClick={passwordVisibleToggle}/>
+            </div>
+            <div className="flex justify-center mt-8">
+              <button
+                className="bg-red-500 w-2/6 p-2 rounded-3xl"
+                type="submit"
+              >
+                SIGN IN
+              </button>
+            </div>
           </form>
           <div className="flex justify-center my-5 ">
             {" "}
@@ -141,7 +162,6 @@ function Login() {
                 console.log("Login Failed");
               }}
             />
-            
           </div>
           <div className="flex justify-center text-sm text-gray-300">
             <Link to="/signup">
@@ -149,7 +169,7 @@ function Login() {
                 Need an account?
               </div>
             </Link>
-            <div className="mx-2">Forgot Password?</div>
+            <Link to='/forgotPassword'><div className="mx-2">Forgot Password?</div></Link>
           </div>
         </div>
       </div>
