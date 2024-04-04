@@ -10,6 +10,7 @@ function Login() {
   let [data, setData] = useState({ email: "", password: "" });
   let { setUserDetails, setUserName } = useUserState();
   let [passwordVisible,setPasswordVisible]=useState(false)
+  const [previousLocation, setPreviousLocation] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,6 +37,11 @@ function Login() {
     }
     verifyEmail();
   }, [location.search]);
+
+  useEffect(() => {
+    setPreviousLocation(location.pathname);
+  }, [location]);
+  console.log(previousLocation,'prev loation')
 
   const handleSubmit = async (e) => {
     e.preventDefault();
