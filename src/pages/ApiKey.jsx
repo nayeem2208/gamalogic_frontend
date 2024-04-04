@@ -1,6 +1,29 @@
+import { useEffect, useState } from "react";
 import SubHeader from "../components/SubHeader";
+import axiosInstance from "../axios/axiosInstance";
 
 function ApiKey() {
+  let [api,setApi]=useState('')
+  useEffect(()=>{
+    async function fetchApikey(){
+      try {
+        let res=await axiosInstance.get('/getApiKey')
+        setApi(res.data.apiKey)
+      } catch (error) {
+        console.log(error)
+      } 
+    }
+    fetchApikey()
+  },[])
+
+  let resetApiKey=async(req,res)=>{
+    try {
+      let resetApiKey=await axiosInstance.get('/resetApiKey')
+      setApi(resetApiKey.data.newApiKey)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <div className=" px-20 py-8">
       <SubHeader SubHeader={"API Key"} />
@@ -15,16 +38,17 @@ function ApiKey() {
             <textarea
               name=""
               id=""
+              value={api}
               cols="40"
               rows="5"
               className="border border-gray-400 rounded-md py-2 px-4 mr-3"
             ></textarea>
             <div className="flex pr-2">
               {" "}
-              <button className="bg-bgblue text-white py-1 px-4 rounded-md  w-3/6 mr-2 h-9 mt-8">
+              <button className="bg-bgblue text-white py-1 px-4 rounded-md  w-3/6 mr-2 h-9 mt-8" onClick={() => {navigator.clipboard.writeText(api)}}>
                 COPY KEY
               </button>
-              <button className="bg-bgblue text-white py-1 px-4 rounded-md ml-2  w-3/6 h-9 mt-8">
+              <button className="bg-bgblue text-white py-1 px-4 rounded-md ml-2  w-3/6 h-9 mt-8" onClick={resetApiKey}>
                 RESET KEY
               </button>
             </div>
