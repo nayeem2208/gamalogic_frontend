@@ -17,7 +17,7 @@ function Body() {
         }
         setUserDetails(parsedToken);
       } else {
-        navigate("/login");
+        navigate("/signin");
       }
     }
   }, []);

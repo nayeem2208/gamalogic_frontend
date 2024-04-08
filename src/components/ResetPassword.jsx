@@ -44,7 +44,7 @@ function ResetPassword() {
           console.log(reset,'reset')
           if(reset.status==200){
             toast.dark(reset.data?.message)
-            navigate('/login')
+            navigate('/signin')
           }
         } else {
           toast.error(
@@ -124,7 +124,7 @@ function ResetPassword() {
             </div>
           </form>
           <div className="flex justify-center text-sm text-gray-300 mt-2">
-            <Link to="/login">Cancel</Link>
+            <Link to="/signin">Cancel</Link>
           </div>
         </div>
       </div>

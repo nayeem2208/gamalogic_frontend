@@ -58,7 +58,7 @@ function ForgotPassword() {
           </div>
         </form>
         <div className="flex justify-center text-sm text-gray-300 mt-2">
-          <Link to="/login">
+          <Link to="/signin">
              Cancel
           </Link>
         </div>

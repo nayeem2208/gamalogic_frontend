@@ -39,7 +39,7 @@ function Header() {
   function logoutHandler() {
     localStorage.removeItem("token");
     setUserDetails(null);
-    navigate("/login");
+    navigate("/signin");
   }
   return (
     <div className="  items-center text-white lg:hidden">

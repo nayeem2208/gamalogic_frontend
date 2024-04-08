@@ -17,6 +17,7 @@ import Login from '../components/Login'
 import Signup from '../components/Signup'
 import ForgotPassword from '../components/ForgotPassword'
 import ResetPassword from '../components/ResetPassword'
+import PostSignupPage from '../components/PostSignupPage'
 
 
 function Router() {
@@ -36,10 +37,11 @@ function Router() {
             <Route path='/support' element={<Support/>} />
         </Route>
         <Route path='/' element={<Authentication/>}>
-            <Route index path='login' element={<Login/>}/>
+            <Route index path='signin' element={<Login/>}/>
             <Route path='signup' element={<Signup/>}/>
             <Route path='forgotPassword' element={<ForgotPassword/>}/>
             <Route path='resetPassword' element={<ResetPassword/>}/>
+            <Route path='VerifyYourEmail' element={<PostSignupPage/>}/>
         </Route>
     </Routes>
   )

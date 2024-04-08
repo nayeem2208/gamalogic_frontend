@@ -5,6 +5,7 @@ import axiosInstance from "../axios/axiosInstance";
 import { toast } from "react-toastify";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useUserState } from "../context/userContext";
+import { FaEye } from "react-icons/fa";
 
 function Signup() {
   let [data, setData] = useState({
@@ -13,7 +14,7 @@ function Signup() {
     password: "",
     confirmPassword: "",
   });
-
+  let [passwordVisible,setPasswordVisible]=useState({new:false,confirm:false})
   let navigate = useNavigate();
   let { setUserDetails } = useUserState();
 
@@ -24,6 +25,13 @@ function Signup() {
       [name]: value,
     }));
   };
+
+  const passwordVisibilityHandler=(field)=>{
+    setPasswordVisible((prevState)=>({
+      ...prevState,
+      [field]:!prevState[field]
+    }))
+  }
 
   const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?!\s).{6,}$/;
   var emailPattern = /\S+@\S+\.\S+/;
@@ -43,20 +51,20 @@ function Signup() {
               let userData = await axiosInstance.post("signup", {data,token});
               console.log(userData, "userdata");
               toast.dark(userData?.data);
-              navigate("/login");
+              navigate("/VerifyYourEmail");
             } else {
               toast.error(
-                "Please give a strong password with character and string "
+                "Please ensure your password contains at least 6 characters, including both letters and numbers.",4000
               );
             }
           } else {
-            toast.error("Please provide a valid email");
+            toast.error("Please enter a valid email address.");
           }
         } else {
-          toast.error("please check confirm password");
+          toast.error("The password and confirm password do not match. Please ensure they are identical.");
         }
       } else {
-        toast.error("please provide all the data");
+        toast.error("Please provide all required information.");
       }
     } catch (error) {
       console.log(error);
@@ -131,25 +139,33 @@ function Signup() {
             <label htmlFor="" className="mt-6">
               Password
             </label>
-            <input
-              type="password"
-              name="password"
-              value={data.password}
-              placeholder="enter your password"
-              onChange={handleInputChange}
-              className="bg-transparent border border-cyan-400 rounded-md py-1 px-4 text-gray-400 my-1"
-            />
+             <div className="flex bg-transparent border justify-between items-center border-cyan-400 rounded-md py-1 px-1  text-gray-400 my-1">
+              <input
+                className="bg-transparent w-5/6 px-3 outline-none"
+                type={passwordVisible.new?'text':'password'}
+                name="password"
+                id="password"
+                placeholder="Enter your password"
+                onChange={handleInputChange}
+                value={data.password}
+              />
+              <FaEye className="w-4 h-4 text-cyan-400 ml-2" onClick={() => passwordVisibilityHandler('new')}/>
+            </div>
             <label htmlFor="" className="mt-6">
               Confirm Password
             </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={data.confirmPassword}
-              placeholder="confirm your password"
-              onChange={handleInputChange}
-              className="bg-transparent border border-cyan-400 rounded-md py-1 px-4 text-gray-400 my-1"
-            />
+            <div className="flex bg-transparent border justify-between items-center border-cyan-400 rounded-md py-1 px-1  text-gray-400 my-1">
+              <input
+                className="bg-transparent w-5/6 px-3 outline-none"
+                type={passwordVisible.confirm?'text':'password'}
+                name="confirmPassword"
+                id="confirmPassword"
+                placeholder="confirm your password"
+                onChange={handleInputChange}
+                value={data.confirmPassword}
+              />
+              <FaEye className="w-4 h-4 text-cyan-400 ml-2" onClick={() => passwordVisibilityHandler('confirm')}/>
+            </div>
             <ReCAPTCHA sitekey={recaptchaSiteKey}  onChange={reCaptchaOnChange} className="my-2 flex justify-center"/>
             <p className="text-xs text-center text-gray-400">
               By signing up, you agree to our{" "}
@@ -192,7 +208,7 @@ function Signup() {
               }}
             />
           </div>
-          <Link to="/login">
+          <Link to="/signin">
             <div className="flex justify-center text-sm text-gray-300">
               Already have an account?
             </div>
