@@ -9,7 +9,7 @@ function SubHeader(props) {
     function logoutHandler() {
       localStorage.removeItem("token");
       setUserDetails(null);
-      navigate("/login");
+      navigate("/signin");
     }
   return (
     <div className="flex justify-between mt-1 ">

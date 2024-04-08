@@ -32,7 +32,7 @@ function SideBar() {
   function logoutHandler() {
     localStorage.removeItem("token");
     setUserDetails(null);
-    navigate("/login");
+    navigate("/signin");
 }
 
 
