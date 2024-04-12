@@ -15,7 +15,7 @@ function SubHeader(props) {
     <div className="flex justify-between mt-1 ">
       <p className="  orangeUnderline">{props.SubHeader}</p>
       <div className="flex " >
-        <p className="bg-gray-100 rounded-lg px-4 flex items-center ">0 Credits Left</p> <p className="ml-6 mr-2 flex items-center ">{userDetails.name}</p>
+        <p className="bg-gray-100 rounded-lg px-4 flex items-center ">{userDetails.credit} Credits Left</p> <p className="ml-6 mr-2 flex items-center ">{userDetails.name}</p>
         <button onClick={logoutHandler}><IoLogOutOutline className="  text-2xl" /></button>
       </div>
     </div>

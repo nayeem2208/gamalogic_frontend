@@ -9,7 +9,7 @@ import { FaEye } from "react-icons/fa";
 function Login() {
   let [data, setData] = useState({ email: "", password: "" });
   let { setUserDetails, setUserName } = useUserState();
-  let [passwordVisible,setPasswordVisible]=useState(false)
+  let [passwordVisible, setPasswordVisible] = useState(false);
   const [previousLocation, setPreviousLocation] = useState(null);
 
   const handleInputChange = (e) => {
@@ -21,6 +21,8 @@ function Login() {
   };
   const navigate = useNavigate();
   const location = useLocation();
+
+
   useEffect(() => {
     async function verifyEmail() {
       const queryParams = new URLSearchParams(location.search);
@@ -38,10 +40,6 @@ function Login() {
     verifyEmail();
   }, [location.search]);
 
-  useEffect(() => {
-    setPreviousLocation(location.pathname);
-  }, [location]);
-  console.log(previousLocation,'prev loation')
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -85,11 +83,11 @@ function Login() {
     }
   };
 
-  const passwordVisibleToggle=()=>{
-    if(data.password){
-    setPasswordVisible(!passwordVisible)
+  const passwordVisibleToggle = () => {
+    if (data.password) {
+      setPasswordVisible(!passwordVisible);
     }
-  }
+  };
 
   return (
     <div
@@ -137,14 +135,17 @@ function Login() {
             <div className="flex bg-transparent border justify-between items-center border-cyan-400 rounded-md py-1 px-1  text-gray-400 my-1">
               <input
                 className="bg-transparent w-5/6 px-3 outline-none"
-                type={passwordVisible?'text':'password'}
+                type={passwordVisible ? "text" : "password"}
                 name="password"
                 id="password"
                 placeholder="Enter your password"
                 onChange={handleInputChange}
                 value={data.password}
               />
-              <FaEye className="w-4 h-4 text-cyan-400 ml-2" onClick={passwordVisibleToggle}/>
+              <FaEye
+                className="w-4 h-4 text-cyan-400 ml-2"
+                onClick={passwordVisibleToggle}
+              />
             </div>
             <div className="flex justify-center mt-8">
               <button
@@ -175,7 +176,9 @@ function Login() {
                 Need an account?
               </div>
             </Link>
-            <Link to='/forgotPassword'><div className="mx-2">Forgot Password?</div></Link>
+            <Link to="/forgotPassword">
+              <div className="mx-2">Forgot Password?</div>
+            </Link>
           </div>
         </div>
       </div>

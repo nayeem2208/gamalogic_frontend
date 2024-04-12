@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useUserState } from "../context/userContext";
 import { FaEye } from "react-icons/fa";
+import { IoInformationCircleOutline } from "react-icons/io5";
 
 function Signup() {
   let [data, setData] = useState({
@@ -14,7 +15,10 @@ function Signup() {
     password: "",
     confirmPassword: "",
   });
-  let [passwordVisible,setPasswordVisible]=useState({new:false,confirm:false})
+  let [passwordVisible, setPasswordVisible] = useState({
+    new: false,
+    confirm: false,
+  });
   let navigate = useNavigate();
   let { setUserDetails } = useUserState();
 
@@ -26,12 +30,12 @@ function Signup() {
     }));
   };
 
-  const passwordVisibilityHandler=(field)=>{
-    setPasswordVisible((prevState)=>({
+  const passwordVisibilityHandler = (field) => {
+    setPasswordVisible((prevState) => ({
       ...prevState,
-      [field]:!prevState[field]
-    }))
-  }
+      [field]: !prevState[field],
+    }));
+  };
 
   const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?!\s).{6,}$/;
   var emailPattern = /\S+@\S+\.\S+/;
@@ -48,20 +52,26 @@ function Signup() {
         if (data.password == data.confirmPassword) {
           if (emailPattern.test(data.email)) {
             if (passwordPattern.test(data.password)) {
-              let userData = await axiosInstance.post("signup", {data,token});
+              let userData = await axiosInstance.post("signup", {
+                data,
+                token,
+              });
               console.log(userData, "userdata");
               toast.dark(userData?.data);
               navigate("/VerifyYourEmail");
             } else {
               toast.error(
-                "Please ensure your password contains at least 6 characters, including both letters and numbers.",4000
+                "Please ensure your password contains at least 6 characters, including both letters and numbers.",
+                4000
               );
             }
           } else {
             toast.error("Please enter a valid email address.");
           }
         } else {
-          toast.error("The password and confirm password do not match. Please ensure they are identical.");
+          toast.error(
+            "The password and confirm password do not match. Please ensure they are identical."
+          );
         }
       } else {
         toast.error("Please provide all required information.");
@@ -74,7 +84,6 @@ function Signup() {
 
   const authenticateData = async (credentialResponse) => {
     try {
-      
       // let res = await axios.post('https://poseben-backend.onrender.com/api/GoogleLogin',{credentialResponse})
       let res = await axiosInstance.post("/googleSignup", {
         credentialResponse,
@@ -89,13 +98,11 @@ function Signup() {
     }
   };
 
-
-  const recaptchaSiteKey=import.meta.env.VITE_RECAPTA_SITE_KEY
-  console.log(recaptchaSiteKey,'recaptcha')
+  const recaptchaSiteKey = import.meta.env.VITE_RECAPTA_SITE_KEY;
+  console.log(recaptchaSiteKey, "recaptcha");
   function reCaptchaOnChange(value) {
     console.log("Captcha value:", value);
   }
-  
 
   return (
     <div
@@ -121,7 +128,7 @@ function Signup() {
               type="text"
               name="fullname"
               value={data.fullname}
-              placeholder="enter your name"
+              placeholder="Enter your name"
               onChange={handleInputChange}
               className="bg-transparent border border-cyan-400 rounded-md py-1 px-4 text-gray-400 my-1"
             />
@@ -132,24 +139,38 @@ function Signup() {
               type="email"
               name="email"
               value={data.email}
-              placeholder="enter your email"
+              placeholder="Enter your email"
               onChange={handleInputChange}
               className="bg-transparent border border-cyan-400 rounded-md py-1 px-4 text-gray-400 my-1"
             />
             <label htmlFor="" className="mt-6">
               Password
             </label>
-             <div className="flex bg-transparent border justify-between items-center border-cyan-400 rounded-md py-1 px-1  text-gray-400 my-1">
+            <div className="flex bg-transparent border justify-between items-center border-cyan-400 rounded-md py-1 px-1  text-gray-400 my-1">
               <input
                 className="bg-transparent w-5/6 px-3 outline-none"
-                type={passwordVisible.new?'text':'password'}
+                type={passwordVisible.new ? "text" : "password"}
                 name="password"
                 id="password"
                 placeholder="Enter your password"
                 onChange={handleInputChange}
                 value={data.password}
               />
-              <FaEye className="w-4 h-4 text-cyan-400 ml-2" onClick={() => passwordVisibilityHandler('new')}/>
+              <button className="group relative inline-flex items-center justify-center  text-sm font-medium ">
+                <IoInformationCircleOutline className="w-5 h-5 text-cyan-400 ml-2" />
+                <div className="ease-in duration-300 opacity-0 group-hover:block group-hover:opacity-100 transition-all">
+                  <div className="ease-in-out duration-500 -translate-y-4 pointer-events-none transition-all group-hover:-translate-y-16 absolute left-1/2 z-50 flex -translate-x-1/2 flex-col items-center rounded-sm text-center text-sm text-slate-300 before:-top-2">
+                    <div className="rounded-sm bg-black py-1 px-2">
+                      <p className="whitespace-nowrap">Please ensure your password <br /> contains at least 6 characters,<br /> including both letters and numbers. </p>
+                    </div>
+                    <div className="h-0 w-fit border-l-8 border-r-8 border-t-8 border-transparent border-t-black"></div>
+                  </div>
+                </div>
+              </button>
+              <FaEye
+                className="w-4 h-4 text-cyan-400 ml-1"
+                onClick={() => passwordVisibilityHandler("new")}
+              />
             </div>
             <label htmlFor="" className="mt-6">
               Confirm Password
@@ -157,16 +178,23 @@ function Signup() {
             <div className="flex bg-transparent border justify-between items-center border-cyan-400 rounded-md py-1 px-1  text-gray-400 my-1">
               <input
                 className="bg-transparent w-5/6 px-3 outline-none"
-                type={passwordVisible.confirm?'text':'password'}
+                type={passwordVisible.confirm ? "text" : "password"}
                 name="confirmPassword"
                 id="confirmPassword"
-                placeholder="confirm your password"
+                placeholder="Confirm your password"
                 onChange={handleInputChange}
                 value={data.confirmPassword}
               />
-              <FaEye className="w-4 h-4 text-cyan-400 ml-2" onClick={() => passwordVisibilityHandler('confirm')}/>
+              <FaEye
+                className="w-4 h-4 text-cyan-400 ml-2"
+                onClick={() => passwordVisibilityHandler("confirm")}
+              />
             </div>
-            <ReCAPTCHA sitekey={recaptchaSiteKey}  onChange={reCaptchaOnChange} className="my-2 flex justify-center"/>
+            <ReCAPTCHA
+              sitekey={recaptchaSiteKey}
+              onChange={reCaptchaOnChange}
+              className="my-2 flex justify-center"
+            />
             <p className="text-xs text-center text-gray-400">
               By signing up, you agree to our{" "}
               <a

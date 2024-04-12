@@ -1,11 +1,20 @@
 import { useState } from "react";
 import SubHeader from "../components/SubHeader";
+import axiosInstance from "../axios/axiosInstance";
 
 function QuickValidation() {
   let [email, setEmail] = useState("");
+  let [result,setResult]=useState('')
 
-  const submitHandler=()=>{
-
+  const submitHandler=async(e)=>{
+    e.preventDefault()
+    try {
+      let res=await axiosInstance.post('/singleEmailValidator',{email})
+      setResult(res.data)
+      console.log(res.data)
+    } catch (error) {
+     console.log(error,'error') 
+    }
   }
 
   return (
@@ -30,6 +39,34 @@ function QuickValidation() {
             </button>
           </div>
         </form>
+        <p className="font-medium text-lg mt-8 mb-4">Result</p>
+        <p className="description text-base">{result.emailid} is {result.is_valid?<span className="text-emerald-500 font-semibold">Valid</span>:<span className="text-red-400 font-semibold">Not Valid</span>}</p>
+        <table className="description my-4">
+          <tr>
+            <td>catchall</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>disposable</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>role</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>syntax_valid</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>unknown</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>message</td>
+            <td></td>
+          </tr>
+        </table>
       </div>
     </div>
   );
