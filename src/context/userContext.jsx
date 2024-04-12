@@ -5,12 +5,15 @@ const userDetailsContext = createContext();
 
 const UserDetailsProvider = ({ children }) => {
   let [userDetails, setUserDetails] = useState(null);
+  let [creditBal,setCreditBal]=useState(0)
 
   return (
     <userDetailsContext.Provider
       value={{
         userDetails,
         setUserDetails,
+        creditBal,
+        setCreditBal
       }}
     >
       {children}
