@@ -12,7 +12,6 @@ function EmailVerification() {
   useEffect(() => {
     const fetchAllFiles = async () => {
       try {
-
         let allFiles = await axiosInstance.get(
           "/getAllUploadedEmailValidationFiles"
         );
@@ -50,12 +49,10 @@ function EmailVerification() {
 
     if (file && file.type === "text/csv") {
       try {
-        
         Papa.parse(file, {
-          header: true ,
+          header: true,
           complete: async function (results) {
             results.fileName = file.name;
-
             const response = await axiosInstance.post(
               "/batchEmailVerification",
               results
@@ -95,22 +92,27 @@ function EmailVerification() {
       try {
         for (const [index, file] of resultFile.entries()) {
           if (file.id && file.processed !== "100%") {
-            const res = await axiosInstance.get(`/getBatchStatus?id=${file.id}`);
+            const res = await axiosInstance.get(
+              `/getBatchStatus?id=${file.id}`
+            );
             if (res.data.emailStatus.processed === res.data.emailStatus.total) {
-              setResultFile(prevResultFiles => [
+              setResultFile((prevResultFiles) => [
                 ...prevResultFiles.slice(0, index),
                 { ...file, processed: "100%" },
                 ...prevResultFiles.slice(index + 1),
               ]);
               setMessage("");
             } else {
-              const progress = Math.round((res.data.emailStatus.processed / res.data.emailStatus.total) * 100);
-              setResultFile(prevResultFiles => [
+              const progress = Math.round(
+                (res.data.emailStatus.processed / res.data.emailStatus.total) *
+                  100
+              );
+              setResultFile((prevResultFiles) => [
                 ...prevResultFiles.slice(0, index),
                 { ...file, processed: `${progress}%` },
                 ...prevResultFiles.slice(index + 1),
               ]);
-              setTimeout(checkCompletion, 3000);
+              setTimeout(checkCompletion, 5000);
             }
           }
         }
