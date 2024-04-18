@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import exportFromJSON from "export-from-json";
 import Papa from "papaparse";
+import ProgressBar from "@ramonak/react-progress-bar"
 
 function EmailVerification() {
   let [message, setMessage] = useState("");
@@ -32,10 +33,13 @@ function EmailVerification() {
             options
           ),
         }));
-        setResultFile((prevResultFiles) => [
-          ...prevResultFiles,
-          ...filesWithProcessedField,
-        ]);
+        const allProcessed = filesWithProcessedField.every(file => file.processed === 100);
+        if (!allProcessed) {
+            setResultFile((prevResultFiles) => [
+                ...prevResultFiles,
+                ...filesWithProcessedField,
+            ]);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -86,19 +90,19 @@ function EmailVerification() {
       alert("Please select a CSV file.");
     }
   };
-
+  console.log(resultFile,'resultfile')
   useEffect(() => {
     const checkCompletion = async () => {
       try {
         for (const [index, file] of resultFile.entries()) {
-          if (file.id && file.processed !== "100%") {
+          if (file.id && file.processed !== 100) {
             const res = await axiosInstance.get(
               `/getBatchStatus?id=${file.id}`
             );
             if (res.data.emailStatus.processed === res.data.emailStatus.total) {
               setResultFile((prevResultFiles) => [
                 ...prevResultFiles.slice(0, index),
-                { ...file, processed: "100%" },
+                { ...file, processed: 100 },
                 ...prevResultFiles.slice(index + 1),
               ]);
               setMessage("");
@@ -109,7 +113,7 @@ function EmailVerification() {
               );
               setResultFile((prevResultFiles) => [
                 ...prevResultFiles.slice(0, index),
-                { ...file, processed: `${progress}%` },
+                { ...file, processed: progress},
                 ...prevResultFiles.slice(index + 1),
               ]);
               setTimeout(checkCompletion, 5000);
@@ -127,7 +131,7 @@ function EmailVerification() {
   const DownloadFile = async (data) => {
     try {
       console.log(data, "data is here");
-      if (data.processed == "100%") {
+      if (data.processed == 100) {
         let res = await axiosInstance.get(
           `/downloadEmailVerificationFile?batchId=${data.id}`
         );
@@ -166,17 +170,16 @@ function EmailVerification() {
       <table className="text-bgblue w-full lg:w-4/5 mt-14 ">
         <tr className="text-left">
           <th className="font-normal w-1/5">File Name</th>
-          <th className="font-normal  w-1/5">Status</th>
+          <th className="font-normal  w-2/5">Status</th>
           <th className="font-normal  w-1/5">Upload Time</th>
           <th></th>
-          {/* <th></th> */}
         </tr>
         {resultFile.map((data, index) => (
           <tr key={index} className="text-sm">
-            <td>{data.file}</td>
-            <td>{data.processed}</td>
+            <td className="">{data.file}</td>
+            <td className="flex "><ProgressBar isLabelVisible={false} completed={data.processed} bgColor='#181e4a' labelSize='13px' className="w-2/5 mr-2" maxCompleted={100}/>{data.processed}%</td>
             <td>{data.formattedDate}</td>
-            <td>
+            <td className="flex justify-center items-center ">
               <button
                 className="bg-bgblue text-white py-1 px-4 rounded-md ml-2   h-9 mt-8 text-xs"
                 onClick={() => DownloadFile(data)}
@@ -184,11 +187,6 @@ function EmailVerification() {
                 DOWNLOAD
               </button>
             </td>
-            {/* <td>
-              <button className="bg-bgblue text-white py-1 px-4 rounded-md ml-2   h-9 mt-8 text-xs">
-                REFRESH
-              </button>
-            </td> */}
           </tr>
         ))}
       </table>
