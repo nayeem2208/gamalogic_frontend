@@ -9,6 +9,7 @@ import ProgressBar from "@ramonak/react-progress-bar";
 function FileEmailFinder() {
   let [message, setMessage] = useState("");
   let [resultFile, setResultFile] = useState([]);
+  let [loading,setLoading]=useState(false)
 
   useEffect(() => {
     const fetchAllFiles = async () => {
@@ -68,11 +69,12 @@ function FileEmailFinder() {
               }
               return item;
             });
-
+            setLoading(true)
             const response = await axiosInstance.post(
               "/batchEmailFinder",
               results
             );
+            setLoading(false)
             setMessage(response.data.message);
             const options = {
               year: "numeric",
@@ -96,6 +98,7 @@ function FileEmailFinder() {
           },
         });
       } catch (error) {
+        setLoading(false)
         console.error("Error uploading file:", error);
       }
     } else {
@@ -129,8 +132,8 @@ function FileEmailFinder() {
                   { ...file, processed: progress },
                   ...prevResultFiles.slice(index + 1),
                 ]);
-                
               }
+              setTimeout(checkCompletion, 5000);
             }
           }
         }
@@ -180,6 +183,14 @@ function FileEmailFinder() {
           accept=".csv"
         />
       </div>
+      {loading&&<div
+        className="mt-3 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+        role="status"
+      >
+        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+          Loading...
+        </span>
+      </div>}
       <p className="bg-cyan-400 font-semibold my-4 ">{message}</p>
       {resultFile.length > 0 && (
         <table className="text-bgblue w-full  mt-14 lg:w-5/6">

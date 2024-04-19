@@ -8,7 +8,7 @@ import { FaEye } from "react-icons/fa";
 
 function Login() {
   let [data, setData] = useState({ email: "", password: "" });
-  let { setUserDetails, setUserName } = useUserState();
+  let { setUserDetails ,setCreditBal} = useUserState();
   let [passwordVisible, setPasswordVisible] = useState(false);
   const [previousLocation, setPreviousLocation] = useState(null);
 
@@ -75,6 +75,7 @@ function Login() {
       });
       let token = res.data;
       setUserDetails(token);
+      setCreditBal(token.credit)
       localStorage.setItem("token", JSON.stringify(token));
       navigate("/");
     } catch (err) {

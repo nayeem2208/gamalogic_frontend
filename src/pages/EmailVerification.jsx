@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import exportFromJSON from "export-from-json";
 import Papa from "papaparse";
-import ProgressBar from "@ramonak/react-progress-bar"
+import ProgressBar from "@ramonak/react-progress-bar";
 
 function EmailVerification() {
   let [message, setMessage] = useState("");
   let [resultFile, setResultFile] = useState([]);
+  let [loading,setLoading]=useState(false)
 
   useEffect(() => {
     const fetchAllFiles = async () => {
@@ -33,12 +34,14 @@ function EmailVerification() {
             options
           ),
         }));
-        const allProcessed = filesWithProcessedField.every(file => file.processed === 100);
+        const allProcessed = filesWithProcessedField.every(
+          (file) => file.processed === 100
+        );
         if (!allProcessed) {
-            setResultFile((prevResultFiles) => [
-                ...prevResultFiles,
-                ...filesWithProcessedField,
-            ]);
+          setResultFile((prevResultFiles) => [
+            ...prevResultFiles,
+            ...filesWithProcessedField,
+          ]);
         }
       } catch (error) {
         console.log(error);
@@ -57,10 +60,12 @@ function EmailVerification() {
           header: true,
           complete: async function (results) {
             results.fileName = file.name;
+            setLoading(true)
             const response = await axiosInstance.post(
               "/batchEmailVerification",
               results
             );
+            setLoading(false)
             setMessage(response.data.message);
             const options = {
               year: "numeric",
@@ -79,18 +84,19 @@ function EmailVerification() {
                   response.data.files.date_time
                 ).toLocaleString("en-US", options),
               },
-              ...prevResultFiles
+              ...prevResultFiles,
             ]);
           },
         });
       } catch (error) {
+        setLoading(false)
         console.error("Error uploading file:", error);
       }
     } else {
       alert("Please select a CSV file.");
     }
   };
-  console.log(resultFile,'resultfile')
+  console.log(resultFile, "resultfile");
   useEffect(() => {
     const checkCompletion = async () => {
       try {
@@ -113,7 +119,7 @@ function EmailVerification() {
               );
               setResultFile((prevResultFiles) => [
                 ...prevResultFiles.slice(0, index),
-                { ...file, processed: progress},
+                { ...file, processed: progress },
                 ...prevResultFiles.slice(index + 1),
               ]);
               setTimeout(checkCompletion, 5000);
@@ -166,6 +172,14 @@ function EmailVerification() {
           onChange={handleFileChange}
         />
       </form>
+      {loading&&<div
+        className="mt-3 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+        role="status"
+      >
+        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+          Loading...
+        </span>
+      </div>}
       <p className="bg-cyan-400 font-semibold my-4 ">{message}</p>
       <table className="text-bgblue w-full lg:w-4/5 mt-14 ">
         <tr className="text-left">
@@ -177,7 +191,17 @@ function EmailVerification() {
         {resultFile.map((data, index) => (
           <tr key={index} className="text-sm">
             <td className="">{data.file}</td>
-            <td className="flex "><ProgressBar isLabelVisible={false} completed={data.processed} bgColor='#181e4a' labelSize='13px' className="w-2/5 mr-2" maxCompleted={100}/>{data.processed}%</td>
+            <td className="flex ">
+              <ProgressBar
+                isLabelVisible={false}
+                completed={data.processed}
+                bgColor="#181e4a"
+                labelSize="13px"
+                className="w-2/5 mr-2"
+                maxCompleted={100}
+              />
+              {data.processed}%
+            </td>
             <td>{data.formattedDate}</td>
             <td className="flex justify-center items-center ">
               <button
